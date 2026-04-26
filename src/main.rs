@@ -541,12 +541,7 @@ fn load_manifest(
     manifest_pb.set_message("📥 downloading");
 
     let manifest = match manifest {
-        Some(manifest_path) => {
-            let manifest_content = std::fs::read_to_string(manifest_path)
-                .with_context(|| format!("failed to read path '{manifest_path}'"))?;
-            serde_json::from_str(&manifest_content)
-                .with_context(|| format!("failed to deserialize manifest in '{manifest_path}'"))?
-        }
+        Some(manifest_path) => xwin::manifest::from_path(manifest_path)?,
         None => xwin::manifest::get_manifest(ctx, manifest_version, channel, manifest_pb.clone())?,
     };
 

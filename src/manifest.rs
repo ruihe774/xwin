@@ -120,6 +120,15 @@ pub struct Manifest {
     channel_items: Vec<ManifestItem>,
 }
 
+/// Loads a top-level manifest from a local JSON file rather than fetching it
+/// over the network.
+pub fn from_path(path: &crate::Path) -> Result<Manifest, anyhow::Error> {
+    let contents = std::fs::read_to_string(path)
+        .with_context(|| format!("failed to read manifest from '{path}'"))?;
+    serde_json::from_str(&contents)
+        .with_context(|| format!("failed to deserialize manifest in '{path}'"))
+}
+
 /// Retrieves the top-level manifest which contains license links as well as the
 /// link to the actual package manifest which describes all of the contents
 pub fn get_manifest(
